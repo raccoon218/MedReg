@@ -27,19 +27,14 @@ namespace MedReg
         public MainWindow()
         {
             InitializeComponent();
-            CustomInitialize();
-        }
-
-        /// <summary>
-        /// custom methods bindings and handlers initializer
-        /// </summary>
-        private void CustomInitialize()
-        {
             try
             {
                 BindDataGrid(dgP, "SELECT Family, FirstName, LastName, Birthday, Snils FROM Patients ORDER BY Family ASC");
             }
-            catch (Exception ex){}
+            catch (Exception ex)
+            {
+                MessageBox.Show("database not exist , please select Card  tab and create new card patient and card visit for working later");
+            }
         }
 
         /// <summary>
@@ -134,7 +129,7 @@ namespace MedReg
             {
                 MessageBox.Show("Select tab Card for created new cards");
             }
-            CustomInitialize();
+            BindDataGrid(dgP, "SELECT Family, FirstName, LastName, Birthday, Snils FROM Patients ORDER BY Family ASC");
             MainItem.IsSelected = true;
         }
 
@@ -151,7 +146,7 @@ namespace MedReg
             }
             else
             {
-
+                //some code
             }
         }
 
@@ -163,11 +158,11 @@ namespace MedReg
         /// <param name="e"></param>
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-
+            //some code
         }
 
         /// <summary>
-        /// view visits history
+        /// view visits history by datarowsview.selecteditem
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
