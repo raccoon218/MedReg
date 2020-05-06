@@ -313,7 +313,7 @@ namespace MedReg
             Label.Content = string.Empty;
         }
 
-     x
+    
     }
 }
 
