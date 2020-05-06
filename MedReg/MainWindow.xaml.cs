@@ -142,7 +142,7 @@ namespace MedReg
             {
                 MessageBox.Show("Select tab Card for created new cards");
             }
-            BindDataGrid(dgP, "SELECT Family, FirstName, LastName, Birthday, Snils FROM Patients ORDER BY Family ASC");
+            CustomInitialize();
             MainItem.IsSelected = true;
         }
 
@@ -159,7 +159,7 @@ namespace MedReg
             }
             else
             {
-                //some code
+
             }
         }
 
@@ -171,21 +171,37 @@ namespace MedReg
         /// <param name="e"></param>
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            using (SqlConnection connection = new SqlConnection(cs))
+            if (MainItem.IsSelected == true)
             {
-                string temp = _snils;
-                SqlCommand CPD = new SqlCommand($"delete from Patients where Snils ='{temp}'", connection);
-                CPD.Connection.Open();
-                CPD.ExecuteNonQuery();
-                CPD.Connection.Close();
-                CustomInitialize();
+                using (SqlConnection connection = new SqlConnection(cs))
+                {
+                    string temp = _snils;
+                    SqlCommand CPD = new SqlCommand($"delete from Patients where Snils ='{temp}'", connection);
+                    CPD.Connection.Open();
+                    CPD.ExecuteNonQuery();
+                    CPD.Connection.Close();
+                    CustomInitialize();
 
-                SqlCommand CVD = new SqlCommand($"delete from Visits where Snils ='{temp}'", connection);
-                CVD.Connection.Open();
-                CVD.ExecuteNonQuery();
-                CVD.Connection.Close();
-                CustomInitialize();
+                    SqlCommand CVD = new SqlCommand($"delete from Visits where Snils ='{temp}'", connection);
+                    CVD.Connection.Open();
+                    CVD.ExecuteNonQuery();
+                    CVD.Connection.Close();
+                    CustomInitialize();
+                }
             }
+            else if(CardItem.IsSelected == true)
+            {
+                //visit without patient - can not be, so it makes no sense to remove the patient without deleting visits
+                using (SqlConnection connection = new SqlConnection(cs))
+                {
+                    SqlCommand CVD = new SqlCommand($"delete from Visits where VisitDate ='{VisitDate.Text}'", connection);
+                    CVD.Connection.Open();
+                    CVD.ExecuteNonQuery();
+                    CVD.Connection.Close();
+                    CustomInitialize();
+                }
+            }
+            
         }
 
         /// <summary>
@@ -199,8 +215,23 @@ namespace MedReg
             DataRowView rs = dg.SelectedItem as DataRowView;
             if (rs != null)
             {
+
                 _snils = rs["Snils"].ToString();
                 BindDataGrid(dgV, $"Select * from Visits where Snils = '{rs["Snils"]}'");
+            }
+        }
+
+        private void DgV_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DataGrid dg = (DataGrid)sender;
+            DataRowView rs = dg.SelectedItem as DataRowView;
+            if (rs != null)
+            {
+                Snils.Text = rs["Snils"].ToString();
+                VisitDate.Text = rs["VisitDate"].ToString();
+                VisitType.Text = rs["VisitType"].ToString();
+                Diagnosis.Text = rs["Diagnosis"].ToString();
+                cardVisit.IsChecked = true;
             }
         }
     }
