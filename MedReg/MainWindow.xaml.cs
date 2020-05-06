@@ -216,11 +216,12 @@ namespace MedReg
             {
                 using (SqlConnection connection = new SqlConnection(cs))
                 {
-                    SqlCommand CVD = new SqlCommand($"update Patient set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
+                    SqlCommand CPD = new SqlCommand($"update Patient set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
                         $"LastName = '{LastName.Text}', Gender = '{Gender.Text}', Birthday = '{Birthday.Text}', Adress = '{Adress.Text}', " +
                         $"PhoneNumber = '{PhoneNumber.Text}' where snils ='{Snils.Text}'", connection);
-                    CVD.ExecuteNonQuery();
-                    CVD.Connection.Close();
+                    CPD.Connection.Open();
+                    CPD.ExecuteNonQuery();
+                    CPD.Connection.Close();
                     CustomInitialize();
                 }
             }
@@ -229,6 +230,7 @@ namespace MedReg
                 using (SqlConnection connection = new SqlConnection(cs))
                 {
                     SqlCommand CVD = new SqlCommand($"update Visits set VisitType = '{VisitType.Text}', Diagnosis = '{Diagnosis.Text}' where VisitDate ='{VisitDate.Text}'", connection);
+                    CVD.Connection.Open();
                     CVD.ExecuteNonQuery();
                     CVD.Connection.Close();
                     CustomInitialize();
