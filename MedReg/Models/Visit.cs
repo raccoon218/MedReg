@@ -14,6 +14,7 @@ namespace MedReg.Models
         public string VisitDate { get; set; }
         public string VisitType { get; set; }
         public string Diagnosis { get; set; }
+        //introduced new unique field - snils
         public string Snils { get; set; }
     }
 }

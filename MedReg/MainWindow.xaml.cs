@@ -1,6 +1,7 @@
 ﻿using MedReg.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
@@ -24,19 +25,31 @@ namespace MedReg
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string _snils = string.Empty;
+        private string cs = ConfigurationManager.ConnectionStrings["MedRegContext"].ConnectionString;
+
         public MainWindow()
         {
             InitializeComponent();
+            CustomInitialize();
+        }
+
+        /// <summary>
+        /// custom binding dg to table initialize and refresh
+        /// </summary>
+        private void CustomInitialize()
+        {
             try
             {
                 BindDataGrid(dgP, "SELECT Family, FirstName, LastName, Birthday, Snils FROM Patients ORDER BY Family ASC");
+                BindDataGrid(dgV, $"SELECT * FROM Visits");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("database not exist , please select Card  tab and create new card patient and card visit for working later");
             }
         }
-
+        
         /// <summary>
         /// binding data grid 
         /// </summary>
@@ -44,7 +57,7 @@ namespace MedReg
         /// <param name="query">query to db</param>
         private void BindDataGrid(DataGrid dgName, string query)
         {
-            var da = new SqlDataAdapter($"{query}", $@"data source =.\SQLEXPRESS; initial catalog = MedReg.Models.MedRegContext; integrated security = True; MultipleActiveResultSets = True; App = EntityFramework");
+            var da = new SqlDataAdapter($"{query}", cs);
             var dt = new DataTable();
             da.Fill(dt);
             dgName.ItemsSource = dt.DefaultView;
@@ -103,7 +116,7 @@ namespace MedReg
                     context.Visits.Add(visit);
                     context.SaveChanges();
                 }
-                
+
             }
         }
 
@@ -121,7 +134,7 @@ namespace MedReg
                     PatientAdd();
                 }
                 else if (cardVisit.IsChecked == true)
-                {                    
+                {
                     VisitAdd();
                 }
             }
@@ -158,7 +171,21 @@ namespace MedReg
         /// <param name="e"></param>
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            //some code
+            using (SqlConnection connection = new SqlConnection(cs))
+            {
+                string temp = _snils;
+                SqlCommand CPD = new SqlCommand($"delete from Patients where Snils ='{temp}'", connection);
+                CPD.Connection.Open();
+                CPD.ExecuteNonQuery();
+                CPD.Connection.Close();
+                CustomInitialize();
+
+                SqlCommand CVD = new SqlCommand($"delete from Visits where Snils ='{temp}'", connection);
+                CVD.Connection.Open();
+                CVD.ExecuteNonQuery();
+                CVD.Connection.Close();
+                CustomInitialize();
+            }
         }
 
         /// <summary>
@@ -170,11 +197,12 @@ namespace MedReg
         {
             DataGrid dg = (DataGrid)sender;
             DataRowView rs = dg.SelectedItem as DataRowView;
-            if(rs != null)
+            if (rs != null)
             {
+                _snils = rs["Snils"].ToString();
                 BindDataGrid(dgV, $"Select * from Visits where Snils = '{rs["Snils"]}'");
-                
             }
         }
     }
 }
+

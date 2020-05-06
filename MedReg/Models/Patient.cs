@@ -18,9 +18,11 @@ namespace MedReg.Models
         public string Birthday { get; set; }
         public string Adress { get; set; }
         public string PhoneNumber { get; set; }
+        //introduced new unique field - snils
         public string Snils { get; set; }
-        public string Height { get; set; }
-        public string Weight { get; set; }
+        //uncoment two line next for change the model
+        //public string Height { get; set; }
+        //public string Weight { get; set; }
 
     }
 }
