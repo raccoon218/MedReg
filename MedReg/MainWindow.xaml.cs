@@ -216,7 +216,7 @@ namespace MedReg
             {
                 using (SqlConnection connection = new SqlConnection(cs))
                 {
-                    SqlCommand CPD = new SqlCommand($"update Patient set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
+                    SqlCommand CPD = new SqlCommand($"update Patients set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
                         $"LastName = '{LastName.Text}', Gender = '{Gender.Text}', Birthday = '{Birthday.Text}', Adress = '{Adress.Text}', " +
                         $"PhoneNumber = '{PhoneNumber.Text}' where snils ='{Snils.Text}'", connection);
                     CPD.Connection.Open();
@@ -254,6 +254,7 @@ namespace MedReg
                 FirstName.Text = rs["FirstName"].ToString();
                 LastName.Text = rs["LastName"].ToString();
                 Gender.Text = rs["Gender"].ToString();
+                Birthday.Text = rs["Birthday"].ToString();
                 Adress.Text = rs["Adress"].ToString();
                 PhoneNumber.Text = rs["PhoneNumber"].ToString();
                 Snils.Text = rs["Snils"].ToString();
