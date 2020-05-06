@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedReg"
         mc:Ignorable="d"
-        Title="MainWindow" Height="496.834" Width="1023.018">
+        Title="MainWindow" Height="496.834" Width="1069.518">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Height="446" Margin="10,10,0,0" VerticalAlignment="Top" Width="894">
+        <TabControl HorizontalAlignment="Left" Height="446" Margin="10,10,0,0" VerticalAlignment="Top" Width="816">
             <TabItem x:Name="MainItem" Header="Main">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid x:Name="dgP" HorizontalAlignment="Left" Height="378" Margin="10,30,0,0" VerticalAlignment="Top" Width="598" IsReadOnly="True" SelectedValue="" SelectionMode="Single" SelectionChanged="DgP_SelectionChanged"/>
-                    <DataGrid x:Name="dgV" ItemsSource="{Binding MedReg.Models.MedRegContext}" HorizontalAlignment="Left" Height="378" Margin="613,30,0,0" VerticalAlignment="Top" Width="265" IsReadOnly="True" SelectionChanged="DgV_SelectionChanged"/>
+                    <DataGrid x:Name="dgP" HorizontalAlignment="Left" Height="378" Margin="10,30,0,0" VerticalAlignment="Top" Width="526" IsReadOnly="True" SelectedValue="" SelectionMode="Single" SelectionChanged="DgP_SelectionChanged"/>
+                    <DataGrid x:Name="dgV" HorizontalAlignment="Left" Height="378" Margin="541,30,0,0" VerticalAlignment="Top" Width="265" IsReadOnly="True" SelectionChanged="DgV_SelectionChanged"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="CardItem" Header="Card">
@@ -32,10 +32,11 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="Create" Content="Create" HorizontalAlignment="Left" Margin="909,36,0,0" VerticalAlignment="Top" Width="96" Click="Create_Click"/>
-        <Button x:Name="Edit" Content="Edit" HorizontalAlignment="Left" Margin="909,61,0,0" VerticalAlignment="Top" Width="96" Click="Edit_Click"/>
-        <Button x:Name="Delete" Content="Delete" HorizontalAlignment="Left" Margin="909,86,0,0" VerticalAlignment="Top" Width="96" Click="Delete_Click"/>
-        <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="909,111,0,0" VerticalAlignment="Top" Width="96" Click="Delete_Click" IsEnabled="False"/>
+        <Button x:Name="Create" Content="Create" HorizontalAlignment="Left" Margin="831,33,0,0" VerticalAlignment="Top" Width="96" Click="Create_Click" MouseEnter="Create_MouseEnter" MouseLeave="Create_MouseLeave"/>
+        <Button x:Name="Edit" Content="Edit" HorizontalAlignment="Left" Margin="831,58,0,0" VerticalAlignment="Top" Width="96" Click="Edit_Click" MouseEnter="Edit_MouseEnter" MouseLeave="Edit_MouseLeave" />
+        <Button x:Name="Delete" Content="Delete" HorizontalAlignment="Left" Margin="831,83,0,0" VerticalAlignment="Top" Width="96" Click="Delete_Click" MouseEnter="Delete_MouseEnter" MouseLeave="Delete_MouseLeave" IsEnabled="False"/>
+        <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="831,108,0,0" VerticalAlignment="Top" Width="96" Click="Save_Click" IsEnabled="False"/>
+        <Label x:Name="Label" Content="" HorizontalAlignment="Left" Margin="831,162,0,0" VerticalAlignment="Top" Height="294" Width="221"/>
 
     </Grid>
 </Window>

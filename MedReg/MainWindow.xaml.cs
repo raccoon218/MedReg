@@ -25,7 +25,7 @@ namespace MedReg
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string _snils = string.Empty;
+        //all requests in code make sense in an external config to change with changing situations
         private string cs = ConfigurationManager.ConnectionStrings["MedRegContext"].ConnectionString;
 
         public MainWindow()
@@ -41,8 +41,8 @@ namespace MedReg
         {
             try
             {
-                BindDataGrid(dgP, "SELECT Family, FirstName, LastName, Birthday, Snils FROM Patients ORDER BY Family ASC");
-                BindDataGrid(dgV, $"SELECT * FROM Visits");
+                BindDataGrid(dgP, "SELECT * FROM Patients ORDER BY Family ASC");
+                BindDataGrid(dgV, "SELECT * FROM Visits");
             }
             catch (Exception ex)
             {
@@ -153,16 +153,19 @@ namespace MedReg
         /// <param name="e"></param>
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            Delete.IsEnabled = true;
+            Save.IsEnabled = true;
             if (CardItem.IsSelected == true)
             {
                 MessageBox.Show("Select tab Main for select record");
             }
             else
             {
-
+                
             }
         }
 
+       
 
         /// <summary>
         /// Delete button handler
@@ -174,15 +177,14 @@ namespace MedReg
             if (MainItem.IsSelected == true)
             {
                 using (SqlConnection connection = new SqlConnection(cs))
-                {
-                    string temp = _snils;
-                    SqlCommand CPD = new SqlCommand($"delete from Patients where Snils ='{temp}'", connection);
+                {                    
+                    SqlCommand CPD = new SqlCommand($"delete from Patients where Snils ='{Snils.Text}'", connection);
                     CPD.Connection.Open();
                     CPD.ExecuteNonQuery();
                     CPD.Connection.Close();
                     CustomInitialize();
 
-                    SqlCommand CVD = new SqlCommand($"delete from Visits where Snils ='{temp}'", connection);
+                    SqlCommand CVD = new SqlCommand($"delete from Visits where Snils ='{Snils.Text}'", connection);
                     CVD.Connection.Open();
                     CVD.ExecuteNonQuery();
                     CVD.Connection.Close();
@@ -195,7 +197,6 @@ namespace MedReg
                 using (SqlConnection connection = new SqlConnection(cs))
                 {
                     SqlCommand CVD = new SqlCommand($"delete from Visits where VisitDate ='{VisitDate.Text}'", connection);
-                    CVD.Connection.Open();
                     CVD.ExecuteNonQuery();
                     CVD.Connection.Close();
                     CustomInitialize();
@@ -205,7 +206,39 @@ namespace MedReg
         }
 
         /// <summary>
+        /// Save button handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            if(cardPatient.IsChecked == true)
+            {
+                using (SqlConnection connection = new SqlConnection(cs))
+                {
+                    SqlCommand CVD = new SqlCommand($"update Patient set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
+                        $"LastName = '{LastName.Text}', Gender = '{Gender.Text}', Birthday = '{Birthday.Text}', Adress = '{Adress.Text}', " +
+                        $"PhoneNumber = '{PhoneNumber.Text}' where snils ='{Snils.Text}'", connection);
+                    CVD.ExecuteNonQuery();
+                    CVD.Connection.Close();
+                    CustomInitialize();
+                }
+            }
+            else if(cardVisit.IsChecked == true)
+            {
+                using (SqlConnection connection = new SqlConnection(cs))
+                {
+                    SqlCommand CVD = new SqlCommand($"update Visits set VisitType = '{VisitType.Text}', Diagnosis = '{Diagnosis.Text}' where VisitDate ='{VisitDate.Text}'", connection);
+                    CVD.ExecuteNonQuery();
+                    CVD.Connection.Close();
+                    CustomInitialize();
+                }
+            }
+        }
+
+        /// <summary>
         /// view visits history by datarowsview.selecteditem
+        /// and add to text box for editing later data about patient
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -215,12 +248,23 @@ namespace MedReg
             DataRowView rs = dg.SelectedItem as DataRowView;
             if (rs != null)
             {
-
-                _snils = rs["Snils"].ToString();
+                Family.Text = rs["Family"].ToString();
+                FirstName.Text = rs["FirstName"].ToString();
+                LastName.Text = rs["LastName"].ToString();
+                Gender.Text = rs["Gender"].ToString();
+                Adress.Text = rs["Adress"].ToString();
+                PhoneNumber.Text = rs["PhoneNumber"].ToString();
+                Snils.Text = rs["Snils"].ToString();
+                cardPatient.IsChecked = true;
                 BindDataGrid(dgV, $"Select * from Visits where Snils = '{rs["Snils"]}'");
             }
         }
-
+        
+        /// <summary>
+        /// add to text box for editing later data about visit
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DgV_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DataGrid dg = (DataGrid)sender;
@@ -234,6 +278,42 @@ namespace MedReg
                 cardVisit.IsChecked = true;
             }
         }
+
+
+        //handlers halper for button and other elements
+
+        private void Delete_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Label.Content = "If you click on delete button on this tab  \n- patient and all linked visit will \nbe deleted. \nFor deleting one to one select Card tab.";
+        }
+
+        private void Delete_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Label.Content = string.Empty;
+        }
+
+        private void Create_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Label.Content = "For Create new patient or visit - \nopen Card tab.";
+        }
+
+        private void Create_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Label.Content = string.Empty;
+        }
+
+        private void Edit_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Label.Content = "For create, edit or delete row \npatient or visit select in datagrid and \nopen Card tab for editing.\n For edit row in table select in datagrid\n open Card tab , make change and click\n on save button.";
+
+        }
+
+        private void Edit_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Label.Content = string.Empty;
+        }
+
+     x
     }
 }
 
