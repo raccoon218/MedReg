@@ -164,45 +164,29 @@ namespace MedReg
                 
             }
         }
-
-       
-
+        
         /// <summary>
         /// Delete button handler
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Delete_Click(object sender, RoutedEventArgs e)
-        {
-            if (MainItem.IsSelected == true)
+        {            
+            using (var context = new MedRegContext())
             {
-                using (SqlConnection connection = new SqlConnection(cs))
-                {                    
-                    SqlCommand CPD = new SqlCommand($"delete from Patients where Snils ='{Snils.Text}'", connection);
-                    CPD.Connection.Open();
-                    CPD.ExecuteNonQuery();
-                    CPD.Connection.Close();
-                    CustomInitialize();
-
-                    SqlCommand CVD = new SqlCommand($"delete from Visits where Snils ='{Snils.Text}'", connection);
-                    CVD.Connection.Open();
-                    CVD.ExecuteNonQuery();
-                    CVD.Connection.Close();
-                    CustomInitialize();
-                }
-            }
-            else if(CardItem.IsSelected == true)
-            {
-                //visit without patient - can not be, so it makes no sense to remove the patient without deleting visits
-                using (SqlConnection connection = new SqlConnection(cs))
+                if (MainItem.IsSelected == true)
                 {
-                    SqlCommand CVD = new SqlCommand($"delete from Visits where VisitDate ='{VisitDate.Text}'", connection);
-                    CVD.ExecuteNonQuery();
-                    CVD.Connection.Close();
-                    CustomInitialize();
+                    context.Database.ExecuteSqlCommand($"delete from Patients where Snils ='{Snils.Text}'");
+                    context.Database.ExecuteSqlCommand($"delete from Visits where Snils ='{Snils.Text}'");
                 }
+                else if (CardItem.IsSelected == true)
+                {
+                    //visit without patient - can not be, so it makes no sense to remove the patient without deleting visits
+                    context.Database.ExecuteSqlCommand($"delete from Visits where VisitDate ='{VisitDate.Text}'");
+                }
+                context.SaveChanges();
             }
-            
+            CustomInitialize();
         }
 
         /// <summary>
@@ -212,30 +196,21 @@ namespace MedReg
         /// <param name="e"></param>
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            if(cardPatient.IsChecked == true)
+            using (var context = new MedRegContext())
             {
-                using (SqlConnection connection = new SqlConnection(cs))
+                if (cardPatient.IsChecked == true)
                 {
-                    SqlCommand CPD = new SqlCommand($"update Patients set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
-                        $"LastName = '{LastName.Text}', Gender = '{Gender.Text}', Birthday = '{Birthday.Text}', Adress = '{Adress.Text}', " +
-                        $"PhoneNumber = '{PhoneNumber.Text}' where snils ='{Snils.Text}'", connection);
-                    CPD.Connection.Open();
-                    CPD.ExecuteNonQuery();
-                    CPD.Connection.Close();
-                    CustomInitialize();
+                    context.Database.ExecuteSqlCommand($"update Patients set Family = '{Family.Text}', FirstName = '{FirstName.Text}', " +
+                         $"LastName = '{LastName.Text}', Gender = '{Gender.Text}', Birthday = '{Birthday.Text}', Adress = '{Adress.Text}', " +
+                         $"PhoneNumber = '{PhoneNumber.Text}' where snils ='{Snils.Text}'");
                 }
-            }
-            else if(cardVisit.IsChecked == true)
-            {
-                using (SqlConnection connection = new SqlConnection(cs))
+                else if(cardVisit.IsChecked == true)
                 {
-                    SqlCommand CVD = new SqlCommand($"update Visits set VisitType = '{VisitType.Text}', Diagnosis = '{Diagnosis.Text}' where VisitDate ='{VisitDate.Text}'", connection);
-                    CVD.Connection.Open();
-                    CVD.ExecuteNonQuery();
-                    CVD.Connection.Close();
-                    CustomInitialize();
+                    context.Database.ExecuteSqlCommand($"update Visits set VisitType = '{VisitType.Text}', Diagnosis = '{Diagnosis.Text}' where VisitDate ='{VisitDate.Text}'");
                 }
+                context.SaveChanges();
             }
+            CustomInitialize();
         }
 
         /// <summary>
@@ -247,8 +222,7 @@ namespace MedReg
         private void DgP_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DataGrid dg = (DataGrid)sender;
-            DataRowView rs = dg.SelectedItem as DataRowView;
-            if (rs != null)
+            if (dg.SelectedItem is DataRowView rs)
             {
                 Family.Text = rs["Family"].ToString();
                 FirstName.Text = rs["FirstName"].ToString();
@@ -271,8 +245,7 @@ namespace MedReg
         private void DgV_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DataGrid dg = (DataGrid)sender;
-            DataRowView rs = dg.SelectedItem as DataRowView;
-            if (rs != null)
+            if (dg.SelectedItem is DataRowView rs)
             {
                 Snils.Text = rs["Snils"].ToString();
                 VisitDate.Text = rs["VisitDate"].ToString();
@@ -282,9 +255,7 @@ namespace MedReg
             }
         }
 
-
         //handlers halper for button and other elements
-
         private void Delete_MouseEnter(object sender, MouseEventArgs e)
         {
             Label.Content = "If you click on delete button on this tab  \n- patient and all linked visit will \nbe deleted. \nFor deleting one to one select Card tab.";
